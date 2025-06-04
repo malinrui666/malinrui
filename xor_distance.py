@@ -9,8 +9,9 @@ def xor_distance(node_id_a: str, node_id_b: str) -> int:
     xor_result = int_a ^ int_b
     return xor_result
 
-node_id_a = '0' * 144 + '00110000'
-node_id_b = '0' * 144 + '01000000'
+
+node_id_a = "0" * 144 + "00110000"
+node_id_b = "0" * 144 + "01000000"
 
 distance = xor_distance(node_id_a, node_id_b)
 
