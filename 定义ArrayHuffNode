@@ -1,0 +1,16 @@
+// ArrayHuffNode.h
+
+#ifndef __ARRAYHUFFNODE_H__
+#define __ARRAYHUFFNODE_H__
+
+struct ArrayHuffNode {
+    char data;              // 字符
+    int weight;             // 权重
+    int left;               // 左子节点索引
+    int right;              // 右子节点索引
+    bool isLeaf;            // 是否是叶子节点
+
+    ArrayHuffNode() : data('\0'), weight(0), left(0), right(0), isLeaf(false) {}
+};
+
+#endif
