@@ -1,0 +1,86 @@
+// ArrayHuffTree.h
+
+#ifndef __ARRAYHUFFTREE_H__
+#define __ARRAYHUFFTREE_H__
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include "ArrayHuffNode.h"
+
+class ArrayHuffTree {
+private:
+    std::vector<ArrayHuffNode> nodes;
+
+    struct Compare {
+        bool operator()(int a, int b) {
+            return nodesRef[a].weight > nodesRef[b].weight;
+        }
+        static std::vector<ArrayHuffNode> nodesRef;
+    };
+
+public:
+    ArrayHuffTree(const std::vector<std::pair<char, int>> &charFreqs) {
+        int N = charFreqs.size();
+        nodes.resize(2 * N); // 预留足够空间
+
+        // 初始化叶子节点
+        for (int i = 0; i < N; ++i) {
+            nodes[N + i].data = charFreqs[i].first;
+            nodes[N + i].weight = charFreqs[i].second;
+            nodes[N + i].left = 0;
+            nodes[N + i].right = 0;
+            nodes[N + i].isLeaf = true;
+        }
+
+        // 构建堆：使用索引
+        Compare::nodesRef = nodes;
+        std::priority_queue<int, std::vector<int>, Compare> pq;
+        for (int i = N; i < 2 * N; ++i) {
+            pq.push(i);
+        }
+
+        int currentIndex = N - 1; // 从 N-1 开始向前填内部节点
+        while (pq.size() > 1) {
+            int i1 = pq.top(); pq.pop();
+            int i2 = pq.top(); pq.pop();
+
+            nodes[currentIndex].weight = nodes[i1].weight + nodes[i2].weight;
+            nodes[currentIndex].left = i1;
+            nodes[currentIndex].right = i2;
+            nodes[currentIndex].isLeaf = false;
+
+            pq.push(currentIndex);
+            currentIndex--;
+        }
+    }
+
+    void printCodes() {
+        int root = findRoot();
+        printHelper(root, "");
+    }
+
+private:
+    int findRoot() {
+        for (int i = 0; i < nodes.size(); ++i) {
+            if (nodes[i].weight != 0 && nodes[i].left != 0 && nodes[i].right != 0)
+                return i;
+        }
+        return 0;
+    }
+
+    void printHelper(int index, const std::string &code) {
+        if (index == 0) return;
+        if (nodes[index].isLeaf) {
+            std::cout << nodes[index].data << " " << code << std::endl;
+            return;
+        }
+        printHelper(nodes[index].left, code + "0");
+        printHelper(nodes[index].right, code + "1");
+    }
+};
+
+// 定义静态成员
+std::vector<ArrayHuffNode> ArrayHuffTree::Compare::nodesRef;
+
+#endif
